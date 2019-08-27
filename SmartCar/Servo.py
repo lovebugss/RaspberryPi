@@ -4,7 +4,6 @@ import RPi.GPIO as GPIO
 import subprocess
 import time
 
-subprocess.call("echo 2=100 > /dev/servoblaster", shell=True)
 # 设置GPIO口为BCM编码方式
 GPIO.setmode(GPIO.BCM)
 # 忽略警告信息
