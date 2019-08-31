@@ -12,19 +12,36 @@ GPIO.setwarnings(False)
 
 
 class Car(object):
-    def __init__(self, in1=20, in2=21, in3=19, in4=26, ena=16, enb=13, CarSpeedControl=50):
-        self.IN1 = in1
-        self.IN2 = in2
-        self.IN3 = in3
-        self.IN4 = in4
-        self.ENA = ena
-        self.ENB = enb
+    IN1 = 20
+    IN2 = 21
+    IN3 = 19
+    IN4 = 26
+    ENA = 16
+    ENB = 13
+    CarSpeedControl = 50
+
+    def __init__(self):
+        '''
+        初始化
+        :param in1:
+        :param in2:
+        :param in3:
+        :param in4:
+        :param ena:
+        :param enb:
+        :param CarSpeedControl:
+        '''
+        GPIO.setup(self.ENA, GPIO.OUT, initial=GPIO.HIGH)
+        GPIO.setup(self.IN1, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(self.IN2, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(self.ENB, GPIO.OUT, initial=GPIO.HIGH)
+        GPIO.setup(self.IN3, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(self.IN4, GPIO.OUT, initial=GPIO.LOW)
         # 设置pwm引脚和频率为2000hz
         self.pwm_ENA = GPIO.PWM(self.ENA, 2000)
         self.pwm_ENB = GPIO.PWM(self.ENB, 2000)
         self.pwm_ENA.start(0)
         self.pwm_ENB.start(0)
-        self.CarSpeedControl = CarSpeedControl
 
         GPIO.setup(self.ENA, GPIO.OUT, initial=GPIO.HIGH)
         GPIO.setup(self.IN1, GPIO.OUT, initial=GPIO.LOW)
@@ -33,7 +50,7 @@ class Car(object):
         GPIO.setup(self.IN3, GPIO.OUT, initial=GPIO.LOW)
         GPIO.setup(self.IN4, GPIO.OUT, initial=GPIO.LOW)
 
-    def run(self):
+    def run(self, seconds=0):
         '''
         前进
         :return:
@@ -44,8 +61,11 @@ class Car(object):
         GPIO.output(self.IN4, GPIO.LOW)
         self.pwm_ENA.ChangeDutyCycle(self.CarSpeedControl)
         self.pwm_ENB.ChangeDutyCycle(self.CarSpeedControl)
+        if seconds > 0:
+            time.sleep(seconds)
+            self.stop()
 
-    def back(self):
+    def back(self, seconds=0):
         '''
         后退
         :return:
@@ -56,20 +76,26 @@ class Car(object):
         GPIO.output(self.IN4, GPIO.HIGH)
         self.pwm_ENA.ChangeDutyCycle(self.CarSpeedControl)
         self.pwm_ENB.ChangeDutyCycle(self.CarSpeedControl)
+        if seconds > 0:
+            time.sleep(seconds)
+            self.stop()
 
-    def left(self):
+    def left(self, seconds=0):
         '''
         左
         :return:
         '''
         GPIO.output(self.IN1, GPIO.LOW)
-        GPIO.output(self.IN2, GPIO.LOW)
+        GPIO.output(self.IN2, GPIO.HIGH)
         GPIO.output(self.IN3, GPIO.HIGH)
         GPIO.output(self.IN4, GPIO.LOW)
         self.pwm_ENA.ChangeDutyCycle(self.CarSpeedControl)
         self.pwm_ENB.ChangeDutyCycle(self.CarSpeedControl)
+        if seconds > 0:
+            time.sleep(seconds)
+            self.stop()
 
-    def right(self):
+    def right(self, seconds=0):
         '''
         右
         :return:
@@ -77,9 +103,12 @@ class Car(object):
         GPIO.output(self.IN1, GPIO.HIGH)
         GPIO.output(self.IN2, GPIO.LOW)
         GPIO.output(self.IN3, GPIO.LOW)
-        GPIO.output(self.IN4, GPIO.LOW)
+        GPIO.output(self.IN4, GPIO.HIGH)
         self.pwm_ENA.ChangeDutyCycle(self.CarSpeedControl)
         self.pwm_ENB.ChangeDutyCycle(self.CarSpeedControl)
+        if seconds > 0:
+            time.sleep(seconds)
+            self.stop()
 
     def stop(self):
         '''
@@ -97,3 +126,6 @@ if __name__ == '__main__':
     car.run()
     time.sleep(5)
     car.stop()
+    time.sleep(2)
+    car.left()
+    time.sleep(2)
